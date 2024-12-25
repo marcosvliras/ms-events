@@ -1,0 +1,34 @@
+name: ms-events-pipeline
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.13"
+      
+      - name: Set up UV environment
+        run: |
+          echo "Setting up UV environment..."
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      
+      - name: Install dependencies
+        run: |
+          cd backend/
+          uv sync
+
+      - name: Run Tests
+        run: |
+          cd backend/
+          uv run python -m pytest tests/
